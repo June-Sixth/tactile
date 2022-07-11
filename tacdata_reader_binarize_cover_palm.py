@@ -1,24 +1,28 @@
 import numpy as np
+from enum import Enum
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.widgets import Slider
 import matplotlib.patches as patches
+from skimage import measure
+
 
 data_dir = "/home/wuyi/data/20220511"
 object_name = "longneckbottle" #     smallshaker  wineglass  largeshaker  longneckbottle
-experiment_num = "4"
+experiment_num = "5"
 
 INNER_TAC_NUM = 6*6
 PALM_TAC_NUM = 10*10
 TIP_TAC_NUM = 12*12
 
+THRETHOLD_PERSENT = 0.1
+
 class TacDataSet():
   def __init__(self):
-    self.tactile_data = []
     self.image_names = []
     self.data_num = 0
-    #changed to nparray
-    self.palm,  self.f0inn,self.f0tip,  self.f1inn,self.f1tip,  self.f2inn,self.f2tip = [],[],[],[],[],[],[]
+    #changed to ndarray
+    self.palm, self.f0inn,self.f0tip,  self.f1inn,self.f1tip,  self.f2inn,self.f2tip = [],[],[],[],[],[],[]
 
   def openfile(self, datadir, object_name, experiment_num):
     self.datapath = datadir + '/' + object_name + '/' + experiment_num + '/'
@@ -31,7 +35,6 @@ class TacDataSet():
           self.data_num += 1
         if(line[:3]=='640'):
           data = list(map(int, line[4:-1].split()))
-          self.tactile_data.append(data)
           self.palm.append(np.array(data[0 : PALM_TAC_NUM]).reshape(10,10))
           current_index = PALM_TAC_NUM
           self.f0inn.append(np.array(data[current_index : current_index + INNER_TAC_NUM]).reshape(6,6))
@@ -56,24 +59,48 @@ class TacDataSet():
     self.inns = [self.f0inn, self.f1inn, self.f2inn]#for read and plot
     self.tips = [self.f0tip, self.f1tip, self.f2tip]
 
+    self.set_threshold()
+    self.binarize()
+    #self.f0tip_valid = self.binarize_threshold(self.f0tip, np.max(self.f0tip) * THRETHOLD_PERSENT)
+    #print("f0tip threshold = " , self.f0tip_valid.size())
+
+  def set_threshold(self):
+    self.thresholds = [np.max(self.palm) * THRETHOLD_PERSENT]
+    for i in range(3):
+      self.thresholds.append(np.max(self.inns[i]) * THRETHOLD_PERSENT)
+      self.thresholds.append(np.max(self.tips[i]) * THRETHOLD_PERSENT)
+
+  def binarize(self):
+    self.palm_valid = np.int64(self.palm>self.thresholds[0])
+    self.f1tip_valid = np.int64(self.f1tip>self.thresholds[4])
+
+  # def binarize_threshold(self, mat, threshold):
+  #   return np.int64(mat>threshold)
+
+  # def connected_component(self, input_mat):
+  #   return 
+
 class TacPlotClass():
   def __init__(self, dataset):
     self.dataset = dataset
     self.time_index = 0
     self.fig = plt.figure(num=object_name + '-' + experiment_num,figsize=(12, 6))
     self.gs = GridSpec(4, 8, figure=self.fig)
-
+    #tips and inners
     self.axtip, self.axinn = [],[]
     for i in range(3):
       self.axtip.append(self.fig.add_subplot(self.gs[0, i]))
       self.axtip[i].set_title(i+4, pad=0.5, fontsize=6)
       self.axinn.append(self.fig.add_subplot(self.gs[1, i]))
       self.axinn[i].set_title(i+1, pad=0.5, fontsize=6)
-
-    self.axpalm = self.fig.add_subplot(self.gs[2:, :3])
+    #palm
+    self.axpalm = self.fig.add_subplot(self.gs[2:, :2])
     self.axpalm.set_title(0, pad=0.5, fontsize=6)
-
-    self.aximg = self.fig.add_subplot(self.gs[2:, 3:])
+    #valid
+    self.axpalm_valid = self.fig.add_subplot(self.gs[2:, 2:4])
+    self.axpalm_valid.set_title("valid, max=%d, threshold=%d%%"%(np.max(self.dataset.palm),THRETHOLD_PERSENT*100), pad=0.5, fontsize=6)
+    #image
+    self.aximg = self.fig.add_subplot(self.gs[2:, 4:])
     self.format_axes(self.fig)
     self.axpoint = self.fig.add_subplot(self.gs[:2, 3:])
     self.axpoint.yaxis.set_ticks_position('right')
@@ -88,8 +115,8 @@ class TacPlotClass():
   def format_axes(self, fig):
     for _,ax in enumerate(fig.axes):
         ax.tick_params(labelbottom=False, labelleft=False)
-        ax.get_xaxis().set_visible(False) 
-        ax.get_yaxis().set_visible(False) 
+        ax.get_xaxis().set_visible(False)  
+        ax.get_yaxis().set_visible(False)
 
   def clear_axes(self):
     self.axpoint.clear()
@@ -98,8 +125,28 @@ class TacPlotClass():
       self.axtip[i].clear()
       self.axinn[i].clear()
 
+  def draw_connected_area(self, coords, ax):
+    for coord in coords:
+      rect=patches.Rectangle((coord[1]-0.5,coord[0]-0.5),1,1,linewidth=1,edgecolor='none',facecolor='b',alpha = 0.7)
+      ax.add_patch(rect)
+
   def draw_one_element(self, time_index):
+    self.clear_axes()
     self.axpalm.imshow(self.dataset.palm[time_index],cmap='Greys')
+    #self.axpalm_valid.imshow(self.dataset.palm_valid[time_index],cmap='Greys')
+    ##test connected component
+    binary_img = self.dataset.palm_valid[time_index]
+    label_img = measure.label(binary_img,connectivity=1)  #1代表4邻接，2代表8邻接
+    props = measure.regionprops(label_img)
+    if(props):
+      props = sorted(props, key = lambda props:props.area, reverse=True)
+      if(props[0].area > 1):
+        binary_img = np.int64(label_img == props[0].label)
+        self.draw_connected_area(props[0].coords,self.axpalm)
+      else:
+        binary_img = np.zeros_like(binary_img)
+    #print(binary_img)
+    self.axpalm_valid.imshow(binary_img,cmap='Greys')
     for i in range(0,3):
       self.axinn[i].imshow(self.dataset.inns[i][time_index],cmap='Greys')
       self.axtip[i].imshow(self.dataset.tips[i][time_index],cmap='Greys')
@@ -122,7 +169,6 @@ class TacPlotClass():
       else:
         axes_x = round(event.ydata)
         axes_y = round(event.xdata)
-        self.clear_axes()
         self.draw_one_element(self.time_index)
         rect=patches.Rectangle((axes_y-0.5, axes_x-0.5),1,1,linewidth=1,edgecolor='r',facecolor='none')
         if(event.inaxes==self.axpalm):

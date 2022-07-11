@@ -8,7 +8,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons
 # wineglass ; longneckbottle 0:finger without palm
 BASE_DIR = "/home/wuyi/data/20220511/"
 object_name = "largeshaker" #     smallshaker  wineglass  largeshaker  longneckbottle
-experiments = "9"
+experiments = "1"
 data_path = BASE_DIR + object_name + '/' + experiments +'/data.txt'
 
 INNER_TAC_NUM = 6*6
