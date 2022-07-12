@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/test_connected_component.dir/test_connected_component.cpp.o  -o test_connected_component 

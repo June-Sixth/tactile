@@ -1,4 +1,0 @@
-/home/wuyi/code/tactile/connected_component/build/CMakeFiles/rebuild_cache.dir
-/home/wuyi/code/tactile/connected_component/build/CMakeFiles/edit_cache.dir
-/home/wuyi/code/tactile/connected_component/build/CMakeFiles/test_connected_component.dir
-/home/wuyi/code/tactile/connected_component/build/CMakeFiles/filters.dir
