@@ -56,7 +56,7 @@ void Seed_Filling(const cv::Mat& _binImg, cv::Mat& _lableImg)
 						neighborPixels.push(std::pair<int, int>(curX + 1, curY));
 					}
 				}
-			}// find a connected componect
+			}// find a connected component
 
 		}
 	}

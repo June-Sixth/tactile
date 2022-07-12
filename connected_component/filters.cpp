@@ -3,9 +3,11 @@
 using namespace std;
 using namespace cv;
 
+
 vector<int> everage_filter(const vector<int>& tactile_data, int rows, int cols){
   int dx8[8] = {1, 0, -1, 0, 1, 1, -1, -1};
   int dy8[8] = {0, 1, 0, -1, 1, -1, -1, 1};
+  int current_index = -1;
   vector<int> filted_tactile(sizeof(tactile_data));
   for (int i = 0; i < rows; ++i){
     for (int j = 0; j < cols; ++j){
