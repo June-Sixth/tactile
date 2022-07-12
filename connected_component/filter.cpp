@@ -1,5 +1,6 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include "filter.h"
 using namespace std;
 using namespace cv;
 
@@ -11,7 +12,8 @@ vector<int> everage_filter(const vector<int>& tactile_data, int rows, int cols){
   vector<int> filted_tactile(sizeof(tactile_data));
   for (int i = 0; i < rows; ++i){
     for (int j = 0; j < cols; ++j){
-      ;
+      ++current_index;
+      cout<<tactile_data.at(current_index);
     }
   }
 }

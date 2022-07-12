@@ -3,8 +3,8 @@ project(connected_component)
 find_package(OpenCV REQUIRED)
 
 add_library(filters STATIC
-  filters.cpp
-  filters.h
+  filter.cpp
+  filter.h
 )
 
 target_link_libraries(filters
@@ -20,4 +20,7 @@ add_library(outlier STATIC
   outlier.cpp
   outlier.h
 )
+
+
 add_executable (test_connected_component test_connected_component.cpp)
+add_executable (main main.cpp)

@@ -1,5 +1,5 @@
-#include "connected_component/outlier.h"
-#include "connected_component/filter.h"
+#include "outlier.h"
+#include "filter.h"
 
 int main()
 {

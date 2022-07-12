@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
-
+using namespace cv;
+using namespace std;
 void TwoPassLabel(const Mat &bwImg, Mat &labImg)
 {
 	assert(bwImg.type() == CV_8UC1);
