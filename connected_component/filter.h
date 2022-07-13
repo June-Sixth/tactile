@@ -6,4 +6,6 @@
 #include <iostream>
 #include <stack>
 
+
+
 #endif /* FILTER_H */

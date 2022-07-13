@@ -24,3 +24,8 @@ add_library(outlier STATIC
 
 add_executable (test_connected_component test_connected_component.cpp)
 add_executable (main main.cpp)
+
+target_link_libraries(main
+  PRIVATE
+  outlier
+)
