@@ -58,9 +58,3 @@ int main()
     }
   }
 }
-
-  // int table_cnt = 0;
-  // for(std::vector<int>::iterator iter = tactile_lable.begin(); iter != tactile_lable.end(); iter++){
-  //   table_cnt++;
-  //   std::cout<<(*iter)<<" "<<table_cnt<<" ";
-  // }

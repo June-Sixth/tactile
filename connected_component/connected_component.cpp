@@ -8,9 +8,9 @@ vector<char> connected_component(const vector<int>& tactile_data, int rows, int 
   
   int dx[4] = {1, 0, -1, 0};
   int dy[4] = {0, 1, 0, -1};
-  vector<char> tactile_lable(tactile_data.size());
+  vector<char> tactile_label(tactile_data.size());
   for (int i = 0; i < tactile_data.size(); ++i)
-    tactile_lable[i] = static_cast<char>(tactile_data[i] >= threshold);
+    tactile_label[i] = static_cast<char>(tactile_data[i] >= threshold);
   int label = 1;  // start by 2
   int current_index = -1;
   for (int i = 0; i < rows; ++i){
@@ -18,7 +18,7 @@ vector<char> connected_component(const vector<int>& tactile_data, int rows, int 
       ++current_index;
       int current_area = 0;//record this compon 
       //std::cout<<i<<j;
-      if(tactile_lable[current_index] == 1){//find a connected component not visited
+      if(tactile_label[current_index] == 1){//find a connected component not visited
         std::stack<int> neiborindex;
         neiborindex.push(current_index);
         ++label;
@@ -26,7 +26,7 @@ vector<char> connected_component(const vector<int>& tactile_data, int rows, int 
           // get the top pixel on the stack 
           auto current_neibor_index = neiborindex.top();
           // label it with the same label of current component
-          tactile_lable.at(current_neibor_index) = label;
+          tactile_label.at(current_neibor_index) = label;
           // pop the top pixel
           ++current_area;
           neiborindex.pop();
@@ -38,27 +38,27 @@ vector<char> connected_component(const vector<int>& tactile_data, int rows, int 
             if (x < 0 || x >= cols || y < 0 || y >= rows) {//out of space
               continue;
             }
-            else if (tactile_lable.at(temp_index) == 1){//neibor pixcel not visited
+            else if (tactile_label.at(temp_index) == 1){//neibor pixcel not visited
               neiborindex.push(temp_index);
               //std::cout<<"x="<<x<<",y="<<y<<",index="<<temp_index<<"; ";
             }
           }//end of for k
         }//end of while(!neiborindex.empty())
-      }//end of if tactile_lable[current_index]==1, find one connected component
+      }//end of if tactile_label[current_index]==1, find one connected component
       if(current_area>0)
         std::cout << "this area size = " << current_area << std::endl;
     }
   }
-  return tactile_lable;
+  return tactile_label;
 }
 
 vector<char> max_connected_component(const vector<int>& tactile_data, int rows, int cols, int threshold){
   
   int dx[4] = {1, 0, -1, 0};
   int dy[4] = {0, 1, 0, -1};
-  vector<char> tactile_lable(tactile_data.size());
+  vector<char> tactile_label(tactile_data.size());
   for (int i = 0; i < tactile_data.size(); ++i)
-    tactile_lable[i] = static_cast<char>(tactile_data[i] >= threshold);
+    tactile_label[i] = static_cast<char>(tactile_data[i] >= threshold);
 
   int label = 1;  // start by 2
   int current_index = -1;
@@ -69,7 +69,7 @@ vector<char> max_connected_component(const vector<int>& tactile_data, int rows, 
     for (int j = 0; j < cols; ++j){
       ++current_index;
       //std::cout<<i<<j;
-      if(tactile_lable[current_index] == 1){//find a connected component not visited
+      if(tactile_label[current_index] == 1){//find a connected component not visited
         int current_area = 0;//record this component area
         int current_area_val = 0;
         std::stack<int> neiborindex;
@@ -79,7 +79,7 @@ vector<char> max_connected_component(const vector<int>& tactile_data, int rows, 
           // get the top pixel on the stack 
           auto current_neibor_index = neiborindex.top();
           // label it with the same label of current component
-          tactile_lable.at(current_neibor_index) = label;
+          tactile_label.at(current_neibor_index) = label;
           // pop the top pixel
           ++current_area;
           current_area_val += tactile_data[current_neibor_index];
@@ -92,7 +92,7 @@ vector<char> max_connected_component(const vector<int>& tactile_data, int rows, 
             if (x < 0 || x >= cols || y < 0 || y >= rows) {//out of space
               continue;
             }
-            else if (tactile_lable.at(temp_index) == 1){//neibor pixcel not visited
+            else if (tactile_label.at(temp_index) == 1){//neibor pixcel not visited
               neiborindex.push(temp_index);
               //std::cout<<"x="<<x<<",y="<<y<<",index="<<temp_index<<"; ";
             }
@@ -103,13 +103,15 @@ vector<char> max_connected_component(const vector<int>& tactile_data, int rows, 
           max_area = current_area;
           max_area_val = current_area_val;
         }
-      }//end of if tactile_lable[current_index]==1, find one connected component done
+      }//end of if tactile_label[current_index]==1, find one connected component done
     }
   }
-  vector<char> tactile_max_area(tactile_lable);//init empty to store max connected area
-  for (int i = 0; i < tactile_max_area.size(); ++i){
-    tactile_max_area[i] = (tactile_max_area[i] == max_area_label? 1:0);
-  }
+  vector<char> tactile_max_area(tactile_label);//init empty to store max connected area
+  for (auto& tactile_iter : tactile_max_area)
+    tactile_iter = (tactile_iter == max_area_label? 1:0);
+  // for (int i = 0; i < tactile_max_area.size(); ++i){
+  //   tactile_max_area[i] = (tactile_max_area[i] == max_area_label? 1:0);
+  // }
   return tactile_max_area;
 }
 
