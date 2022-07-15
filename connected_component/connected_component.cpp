@@ -127,19 +127,19 @@ void print_tactile_data(const vector<int>& tactile_data, int rows, int cols){
 }
 
 
-int main()
-{
-  std::vector<int> tactile_data = { 1,15,0,0,0,0,
-                                    1,0,2,0,0,0,
-                                    0,1,24,0,0,0,
-                                    0,0,0,1,0,0,
-                                    0,0,0,0,1,1,
-                                    0,1,0,0,0,0 };
-  int rows = 6;
-  int cols = 6;
+// int main()
+// {
+//   std::vector<int> tactile_data = { 1,15,0,0,0,0,
+//                                     1,0,2,0,0,0,
+//                                     0,1,24,0,0,0,
+//                                     0,0,0,1,0,0,
+//                                     0,0,0,0,1,1,
+//                                     0,1,0,0,0,0 };
+//   int rows = 6;
+//   int cols = 6;
 
-  vector<char> tactile_lable = max_connected_component(tactile_data, rows, cols, 1);
-  vector<int> tactile_int2print(tactile_lable.begin(),tactile_lable.end());
-  print_tactile_data(tactile_int2print, rows, cols);
-}
+//   vector<char> tactile_lable = max_connected_component(tactile_data, rows, cols, 1);
+//   vector<int> tactile_int2print(tactile_lable.begin(),tactile_lable.end());
+//   print_tactile_data(tactile_int2print, rows, cols);
+// }
 
