@@ -1,7 +1,7 @@
 #include "outlier.h"
 
 using namespace std;
-vector<bool> outlier(const vector<bool>& tactile_valids_, int rows, int cols){
+vector<bool> outlier_f(const vector<bool>& tactile_valids_, int rows, int cols){
 // remove potential outliers
   vector<bool> tactile_valids_tmp(tactile_valids_);
   int current_index;
